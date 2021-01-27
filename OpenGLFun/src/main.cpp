@@ -17,6 +17,18 @@ void ReadFileToString(std::string& outString, const std::string& fileName)
 	VertexFS.close();
 }
 
+void CheckShaderCompilation(int shaderHandle)
+{
+	int sucess = 0;
+	char infolog[512];
+	glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &sucess);
+	if (!sucess)
+	{
+		glGetShaderInfoLog(shaderHandle, 512, nullptr, infolog);
+		std::cout << "Shader Compilation Error: " << infolog << std::endl;
+	}
+}
+
 int main()
 {
 	glfwInit();
@@ -47,14 +59,15 @@ int main()
 	const char* vertexShaderSource = VertexShaderSrc.c_str();
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
-
+	CheckShaderCompilation(vertexShader);
 	//frag shader
 	unsigned int FragShader;
 	FragShader = glCreateShader(GL_FRAGMENT_SHADER);
 	const char* FragmentShaderSrc = FragShaderSrc.c_str();
 	glShaderSource(FragShader, 1, &FragmentShaderSrc, NULL);
 	glCompileShader(FragShader);
-
+	CheckShaderCompilation(FragShader);
+	
 	//shader program
 	unsigned int ShaderProgram;
 	ShaderProgram = glCreateProgram();
